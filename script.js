@@ -63,10 +63,10 @@ function formatSchedule(schedule) {
     daysOfWeek.forEach(function (day, index) {
         var _a;
         var currentDay = schedule[day];
-        var nextDay = schedule[daysOfWeek[index + 1]];
+        var nextDay = schedule[daysOfWeek[index + 1 === daysOfWeek.length ? 0 : index + 1]];
         var openTime = "";
         var closeTime = "";
-        if (currentDay.length === 0) {
+        if (!currentDay.find(function (elem) { return elem.type === "open"; })) {
             formattedSchedule.push({ day: day, close: true });
         }
         else if (currentDay[0].type === "open" &&
@@ -109,12 +109,10 @@ function loadJSON(url) {
 // создаем элементы для отображения в DOM
 function displaySchedule() {
     return __awaiter(this, void 0, void 0, function () {
-        var jsonData, formattedSchedule, dayWeek, scheduleList, day, listItem, spanLeft, spanRight, spanCenter, error_1;
+        var jsonData, formattedSchedule, dayWeek, scheduleList, day, listItem, spanLeft, spanRight, spanCenter;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, loadJSON("data.json")];
+                case 0: return [4 /*yield*/, loadJSON("data.json")];
                 case 1:
                     jsonData = _a.sent();
                     formattedSchedule = formatSchedule(jsonData);
@@ -149,12 +147,7 @@ function displaySchedule() {
                     else {
                         console.error("Элемент списка 'schedule' не найден.");
                     }
-                    return [3 /*break*/, 3];
-                case 2:
-                    error_1 = _a.sent();
-                    console.error("Ошибка загрузки данных:", error_1);
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
+                    return [2 /*return*/];
             }
         });
     });

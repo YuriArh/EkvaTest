@@ -45,11 +45,13 @@ function formatSchedule(schedule: Schedule): formattedDay[] {
 
   daysOfWeek.forEach((day, index) => {
     const currentDay = schedule[day];
-    const nextDay = schedule[daysOfWeek[index + 1]];
+    const nextDay =
+      schedule[daysOfWeek[index + 1 === daysOfWeek.length ? 0 : index + 1]];
+
     let openTime = "";
     let closeTime = "";
 
-    if (currentDay.length === 0) {
+    if (!currentDay.find((elem) => elem.type === "open")) {
       formattedSchedule.push({ day, close: true });
     } else if (
       currentDay[0].type === "open" &&
@@ -84,46 +86,42 @@ async function loadJSON(url: string): Promise<any> {
 
 // создаем элементы для отображения в DOM
 async function displaySchedule() {
-  try {
-    const jsonData = await loadJSON("data.json");
-    const formattedSchedule: formattedDay[] = formatSchedule(jsonData);
-    const dayWeek = getDayWeek();
-    const scheduleList = document.getElementById("schedule");
-    if (scheduleList) {
-      for (const day in formattedSchedule) {
-        const listItem = document.createElement("li");
-        const spanLeft = document.createElement("span");
-        const spanRight = document.createElement("span");
+  const jsonData = await loadJSON("data.json");
+  const formattedSchedule: formattedDay[] = formatSchedule(jsonData);
+  const dayWeek = getDayWeek();
+  const scheduleList = document.getElementById("schedule");
+  if (scheduleList) {
+    for (const day in formattedSchedule) {
+      const listItem = document.createElement("li");
+      const spanLeft = document.createElement("span");
+      const spanRight = document.createElement("span");
 
-        spanLeft.textContent = `${formattedSchedule[day].day}`;
-        spanLeft.setAttribute("id", "left-text");
-        spanRight.setAttribute("id", "right-text");
+      spanLeft.textContent = `${formattedSchedule[day].day}`;
+      spanLeft.setAttribute("id", "left-text");
+      spanRight.setAttribute("id", "right-text");
 
-        if (formattedSchedule[day].close) {
-          spanRight.textContent = "close";
-          spanRight.classList.add("closed");
-        } else {
-          spanRight.textContent = `${formattedSchedule[day].openTime} - ${formattedSchedule[day].closeTime}`;
-        }
-
-        listItem.appendChild(spanLeft);
-
-        if (day === dayWeek) {
-          const spanCenter = document.createElement("span");
-          spanCenter.textContent = "today";
-          spanCenter.setAttribute("id", "center-text");
-          listItem.appendChild(spanCenter);
-        }
-
-        listItem.appendChild(spanRight);
-
-        scheduleList.appendChild(listItem);
+      if (formattedSchedule[day].close) {
+        spanRight.textContent = "close";
+        spanRight.classList.add("closed");
+      } else {
+        spanRight.textContent = `${formattedSchedule[day].openTime} - ${formattedSchedule[day].closeTime}`;
       }
-    } else {
-      console.error("Элемент списка 'schedule' не найден.");
+
+      listItem.appendChild(spanLeft);
+
+      if (day === dayWeek) {
+        const spanCenter = document.createElement("span");
+        spanCenter.textContent = "today";
+        spanCenter.setAttribute("id", "center-text");
+        listItem.appendChild(spanCenter);
+      }
+
+      listItem.appendChild(spanRight);
+
+      scheduleList.appendChild(listItem);
     }
-  } catch (error) {
-    console.error("Ошибка загрузки данных:", error);
+  } else {
+    console.error("Элемент списка 'schedule' не найден.");
   }
 }
 
