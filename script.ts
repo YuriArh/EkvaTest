@@ -22,9 +22,7 @@ const daysOfWeek = [
 //получаем номер сегодняшнего дня недели
 function getDayWeek() {
   let date = new Date();
-  let dayWeek = [7, 1, 2, 3, 4, 5, 6][date.getDay()];
-
-  dayWeek -= 1;
+  let dayWeek = new Array(7)[date.getDay()];
 
   return dayWeek.toString();
 }
